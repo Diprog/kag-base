@@ -97,16 +97,10 @@ void RemoveWarning()
 
 bool onClientProcessChat(CRules@ this, const string &in textIn, string &out textOut, CPlayer@ player)
 {
+	//no processing
 	textOut = textIn;
-
-	if (player is null) return true;
-
-	// Return if it's not the local player
-	if (not player.isMyPlayer()) return true;
-
 	//but register a movement
 	DidInput();
-
 	return true;
 }
 

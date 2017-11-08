@@ -176,51 +176,46 @@ f32 getPriorityPickupScale(CBlob@ this, CBlob@ b, f32 scale)
 {
 	u32 gameTime = getGameTime();
 
-	const string name = b.getName();
-	u32 unpackTime = b.get_u32("unpack time");
-
-	//special stuff - flags etc
-	if (b.hasTag("special"))
-	{
-		scale *= 0.01f;
-	}
-
+	// 0
 	// exploding stuff + crates unpacking
-	if (b.hasTag("exploding") || unpackTime > gameTime)
 	{
-		scale *= 0.1f;
+		u32 unpackTime = b.get_u32("unpack time");
+		if (b.hasTag("exploding") || unpackTime > gameTime)
+		{
+			scale *= 0.1f;
+		}
+
+		//special stuff - flags etc
+		if (b.hasTag("special"))
+		{
+			scale *= 0.01f;
+		}
 	}
 
+	// 1
 	// combat items, important
-	if (name == "boulder" || name == "drill" || name == "keg" || name == "saw" ||
-	    name == "mine" || name == "satchel" || name == "crate")
+	const string name = b.getName();
 	{
-		scale *= 0.41f;
-	}
-	
-	// builder materials
-	{
-		if (name == "mat_gold")
+		if (name == "boulder" || name == "drill" || name == "keg" ||
+		        name == "mine" || name == "satchel" || name == "crate")
 		{
-			scale *= 0.7f;
-		}
-		if (name == "mat_stone")
-		{
-			scale *= 0.9f;
+			scale *= 0.41f;
 		}
 	}
-	
+
 	//low priority
 	if (name == "log" || b.hasTag("player"))
 	{
 		scale *= 5.0f;
 	}
 
-	// super low priority, dead stuff - sick of picking up corpses
-	if (b.hasTag("dead"))
+	// super low priority
+	// dead stuff, sick of picking up corpses
 	{
-		scale *= 10.0f;
-		scale += 20.0f;
+		if (b.hasTag("dead"))
+		{
+			scale *= 10.0f;
+		}
 	}
 
 	const string thisname = this.getName();
@@ -230,12 +225,6 @@ f32 getPriorityPickupScale(CBlob@ this, CBlob@ b, f32 scale)
 	{
 		if (name == "mat_wood" || name == "mat_stone" || name == "mat_gold")
 		{
-			// scale based on how full the stack is
-			f32 stack_size = b.getQuantity();
-			f32 max_size = b.maxQuantity;
-			scale *= (1.25f - ((stack_size / max_size) / 2.0f));
-			// scaling will vary from 0.75 (full stack) to 1.25 (empty stack)
-			
 			if (thisname == "builder")
 			{
 				scale *= 0.25f;

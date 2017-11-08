@@ -45,37 +45,13 @@ shared class HoverMessage
 	// get message into a nice, friendly format
 	string message()
 	{
-		//short-circuit
-		if (quantity == 0)
+		string d = "";
+		if(quantity > 0) //show only positive messages
+		//if(quantity != 0) //show positive and negative messages
 		{
-			return "";
+			d = (quantity > 0 ? "+" : "-") + Maths::Abs(quantity) + " " + name;
 		}
-
-		const bool show_positive = true;
-		const bool show_negative = false;
-		//translate name
-		string _translated_name = name;
-		//(unless this is a kill message - todo: generalise this further)
-		if(merge_id != 1337)
-		{
-			_translated_name = getTranslatedString(_translated_name);
-		}
-		//positive messages
-		if(show_positive && quantity > 0)
-		{
-			return getTranslatedString("+{AMOUNT} {NAME}")
-				.replace("{AMOUNT}", ""+Maths::Abs(quantity))
-				.replace("{NAME}", _translated_name);
-		}
-		//negative messages
-		else if(show_negative && quantity < 0)
-		{
-			return getTranslatedString("-{AMOUNT} {NAME}")
-				.replace("{AMOUNT}", ""+Maths::Abs(quantity))
-				.replace("{NAME}", _translated_name);
-		}
-
-		return "";
+		return d;
 	}
 
 	// update message on every tick
@@ -132,7 +108,7 @@ shared class HoverMessage
 	}
 };
 
-HoverMessage@ addMessage(CBlob@ this, HoverMessage@ m)
+void addMessage(CBlob@ this, HoverMessage@ m)
 {
 	HoverMessage[]@ messages;
 	if (!this.get("messages", @messages))
@@ -153,10 +129,9 @@ HoverMessage@ addMessage(CBlob@ this, HoverMessage@ m)
 			message.name = m.name;
 			message.ticker = 0;
 			message.ypos = 0.0;
-			return message;
+			return;
 		}
 	}
 
 	this.push("messages", m);
-	return m;
 }

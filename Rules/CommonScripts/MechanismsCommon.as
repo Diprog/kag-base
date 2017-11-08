@@ -354,7 +354,10 @@ shared class MapPowerChunk
 	//"flip" the double buffer
 	void flip()
 	{
-		power_old = power_new;
+		for(int i = 0; i < chunk_size; i++)
+		{
+			power_old[i] = power_new[i];
+		}
 	}
 
 	//check if there's any interesting topology going on in this chunk
